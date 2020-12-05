@@ -24,7 +24,10 @@ import github.com/oslokommune/go-oidc-middleware/pkg/v1/middleware"
 func NewRouter() *gin.Engine {
 	router := gin.Default()
 
-	discoveryURL := url.Parse("https://auth-provider.url/.well-known/openid-configuration")
+	discoveryURL, err := url.Parse("https://auth-provider.url/.well-known/openid-configuration")
+	if err != nil {
+		panic(err)
+	}
 
 	router.Use(middleware.NewGinAuthenticationMiddleware(*discoveryURL))
 
