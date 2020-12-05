@@ -2,13 +2,9 @@ package middleware
 
 import (
 	"errors"
-	"net/http"
-	"net/url"
 	"time"
 
-	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
 )
 
 func getPemCert(JWKSResponse *JSONWebKeyResponse, token *jwt.Token) (string, error) {
@@ -54,38 +50,5 @@ func createValidationKeyGetter(doc *DiscoveryDocument) func(token *jwt.Token) (i
 		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
 
 		return result, nil
-	}
-}
-
-func NewAuthenticationMiddleware(discoveryURL url.URL) *jwtmiddleware.JWTMiddleware {
-	discoveryDocument := NewDiscoveryDocument(discoveryURL)
-
-	err := discoveryDocument.Initialize()
-	if err != nil {
-		panic(err)
-	}
-
-	middleware := jwtmiddleware.New(jwtmiddleware.Options{
-		ValidationKeyGetter: createValidationKeyGetter(discoveryDocument),
-		ErrorHandler:        nil,
-		Extractor:           jwtmiddleware.FromAuthHeader,
-		Debug:               false,
-		SigningMethod:       jwt.SigningMethodRS256,
-	})
-	
-	return middleware
-}
-
-func NewGinAuthenticationMiddleware(discoveryURL url.URL) gin.HandlerFunc {
-	middleware := NewAuthenticationMiddleware(discoveryURL)
-
-	return func(c *gin.Context) {
-		err := middleware.CheckJWT(c.Writer, c.Request)
-
-		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		} else {
-			c.Next()
-		}
 	}
 }
