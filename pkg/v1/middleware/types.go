@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"github.com/sirupsen/logrus"
+	"io"
 	"net/url"
 
 	"github.com/dgrijalva/jwt-go"
@@ -30,4 +32,11 @@ type DiscoveryDocument struct {
 
 type User struct {
 	Claims jwt.MapClaims
+}
+
+type NewJWTValidationMiddlewareOptions struct {
+	Out      io.Writer
+	LogLevel logrus.Level
+
+	DiscoveryURL *url.URL
 }
