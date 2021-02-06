@@ -23,11 +23,12 @@ type JSONWebKey struct {
 }
 
 type DiscoveryDocument struct {
-	DiscoveryURL url.URL
-	Issuer       string   `json:"issuer"`
-	JWKSURL      string   `json:"jwks_uri"`
-	Algorithms   []string `json:"id_token_signing_alg_values_supported"`
-	KeyResponse  *JSONWebKeyResponse
+	DiscoveryURL          url.URL
+	Algorithms            []string `json:"id_token_signing_alg_values_supported"`
+	IntrospectionEndpoint string
+	Issuer                string `json:"issuer"`
+	JWKSURL               string `json:"jwks_uri"`
+	KeyResponse           *JSONWebKeyResponse
 }
 
 type User struct {
@@ -39,4 +40,13 @@ type NewJWTValidationMiddlewareOptions struct {
 	LogLevel logrus.Level
 
 	DiscoveryURL *url.URL
+}
+
+type NewGinIntrospectionValidationMiddlewareOptions struct {
+	Out      io.Writer
+	LogLevel logrus.Level
+
+	DiscoveryURL *url.URL
+	ClientID     string
+	ClientSecret string
 }
