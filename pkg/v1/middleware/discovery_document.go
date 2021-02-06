@@ -33,7 +33,9 @@ func loadDiscoveryDocument(document *DiscoveryDocument) error {
 		return fmt.Errorf("could not fetch discovery url: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	err = json.NewDecoder(resp.Body).Decode(document)
 	if err != nil {
@@ -49,7 +51,10 @@ func loadJwksData(document *DiscoveryDocument) error {
 		return fmt.Errorf("could not fetch jwks URL")
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
 	jwks := JSONWebKeyResponse{}
 
 	err = json.NewDecoder(resp.Body).Decode(&jwks)
